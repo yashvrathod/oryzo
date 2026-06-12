@@ -1,0 +1,22 @@
+"use client"
+
+import Image from "next/image"
+
+export default function KeyboardImage({ visible }: { visible: boolean }) {
+  return (
+    <Image
+      src="/keyboard.png"
+      alt=""
+      width={1699}
+      height={624}
+      className="absolute top-31 -right-62 w-[60rem] h-auto pointer-events-none z-30"
+      style={{
+        transform: visible
+          ? "translateX(0) rotate(-5deg)"
+          : "translateX(120%) rotate(12deg)",
+        transition: "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+      }}
+      priority
+    />
+  )
+}
