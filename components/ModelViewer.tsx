@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Canvas } from "@react-three/fiber"
 import { useGLTF, Environment, useTexture } from "@react-three/drei"
 import * as THREE from "three"
@@ -40,10 +40,30 @@ function MoonFloor() {
 }
 
 export default function ModelViewer({ onLoaded }: { onLoaded?: () => void }) {
+  const [viewport, setViewport] = useState<"mobile" | "tablet" | "desktop">("desktop")
+
+  useEffect(() => {
+    function check() {
+      const w = window.innerWidth
+      if (w < 640) setViewport("mobile")
+      else if (w < 1024) setViewport("tablet")
+      else setViewport("desktop")
+    }
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
+  const camera = viewport === "mobile"
+    ? { position: [2, 1.5, 4] as [number, number, number], fov: 50 }
+    : viewport === "tablet"
+    ? { position: [2.5, 1.8, 4.5] as [number, number, number], fov: 48 }
+    : { position: [3, 2, 5] as [number, number, number], fov: 45 }
+
   return (
     <div className="w-full h-full">
       <Canvas
-        camera={{ position: [3, 2, 5], fov: 45 }}
+        camera={camera}
         gl={{ toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2, alpha: true }}
         onCreated={({ gl }) => { gl.setClearColor(0x000000, 0) }}
         shadows

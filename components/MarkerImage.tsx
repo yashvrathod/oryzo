@@ -9,7 +9,7 @@ export default function MarkerImage({ visible }: { visible: boolean }) {
       alt=""
       width={464}
       height={537}
-      className="absolute top-146 right-36 w-60 h-auto pointer-events-none z-30"
+      className="absolute top-146 right-36 w-60 h-auto pointer-events-none z-30 hidden lg:block"
       style={{
         transform: visible
           ? "translateX(0) rotate(2deg)"

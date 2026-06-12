@@ -9,7 +9,7 @@ export default function NotesImage({ visible }: { visible: boolean }) {
       alt=""
       width={567}
       height={440}
-      className="absolute top-92 -left-52 w-192 h-auto pointer-events-none z-30"
+      className="absolute top-92 -left-52 w-192 h-auto pointer-events-none z-30 hidden lg:block"
       style={{
         transform: visible
           ? "translateX(0) rotate(-3deg)"

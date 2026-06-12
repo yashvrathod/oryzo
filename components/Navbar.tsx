@@ -1,28 +1,86 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 
+const links = [
+  { href: "#intro", label: "Intro" },
+  { href: "#features", label: "Features" },
+  { href: "#practice", label: "Practice" },
+  { href: "#contact", label: "Contact" },
+]
+
 export default function Navbar() {
+  const [open, setOpen] = useState(false)
+
   return (
     <>
       {/* Top Navigation */}
-      <nav className="absolute top-8 left-0 right-0 z-50 flex items-start justify-between px-10 lg:px-16">
-
+      <nav className="absolute top-4 sm:top-8 left-0 right-0 z-50 flex items-start justify-between px-4 sm:px-10 lg:px-16">
         {/* Left Dot */}
-        <div className="h-4 w-4 rounded-full bg-white" />
+        <div className="h-3 w-3 sm:h-4 sm:w-4 rounded-full bg-white" />
 
-        {/* Right Links */}
-        <div className="flex items-center gap-8 text-xs font-medium uppercase tracking-[0.25em] text-white">
-          <Link href="#intro">Intro</Link>
-          <Link href="#features">Features</Link>
-          <Link href="#practice">Practice</Link>
-          <Link href="#contact">Contact</Link>
+        {/* Desktop Links */}
+        <div className="hidden lg:flex items-center gap-8 text-xs font-medium uppercase tracking-[0.25em] text-white">
+          {links.map((l) => (
+            <Link key={l.href} href={l.href}>{l.label}</Link>
+          ))}
         </div>
 
+        {/* Hamburger */}
+        <button
+          onClick={() => setOpen(!open)}
+          className="relative z-60 flex flex-col gap-[5px] lg:hidden p-2"
+          aria-label="Toggle menu"
+        >
+          <span
+            className={`block h-0.5 w-6 bg-white transition-all duration-300 ${
+              open ? "translate-y-[7px] rotate-45" : ""
+            }`}
+          />
+          <span
+            className={`block h-0.5 w-6 bg-white transition-all duration-300 ${
+              open ? "opacity-0" : ""
+            }`}
+          />
+          <span
+            className={`block h-0.5 w-6 bg-white transition-all duration-300 ${
+              open ? "-translate-y-[7px] -rotate-45" : ""
+            }`}
+          />
+        </button>
       </nav>
 
+      {/* Mobile Menu Overlay */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/80 backdrop-blur-md transition-opacity duration-300 lg:hidden ${
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setOpen(false)}
+      >
+        <div
+          className={`absolute right-0 top-0 h-full w-64 bg-[#0a0a0a] border-l border-white/10 p-8 pt-24 transition-transform duration-300 ${
+            open ? "translate-x-0" : "translate-x-full"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex flex-col gap-6">
+            {links.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="text-lg font-medium uppercase tracking-[0.25em] text-white hover:text-white/60 transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Right Vertical Label */}
-     <div className="absolute right-0 top-1/2 z-50 -translate-y-1/2 bg-white/90 px-1 py-30 backdrop-blur-md">
+     <div className="absolute right-0 top-1/2 z-50 -translate-y-1/2 bg-white/90 px-1 py-30 backdrop-blur-md hidden lg:block">
   <span className="block rotate-90 origin-center whitespace-nowrap text-[12px] font-bold uppercase tracking-[0.25em] text-black">
     neXode • AI DSA Mentor
   </span>

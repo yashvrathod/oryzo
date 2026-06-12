@@ -2,18 +2,18 @@
 
 export default function Logo() {
   return (
-    <div className="absolute top-36 left-12 z-20 select-none">
+    <div className="absolute top-28 left-4 sm:top-16 sm:left-8 lg:top-36 lg:left-12 z-20 select-none">
       <div className="relative">
 
         {/* Small Heading */}
-        <p className="mb-4 ml-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
+        <p className="mb-2 sm:mb-4 ml-1 sm:ml-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
           Personalized AI guidance for coding interviews.
         </p>
 
         {/* Glow */}
         <span
           aria-hidden
-          className="absolute inset-0 text-[8rem] lg:text-[10rem]
+          className="absolute inset-0 text-[3.5rem] sm:text-[6rem] lg:text-[8rem] xl:text-[10rem]
                      font-extrabold tracking-[-0.06em]
                      text-violet-400/20 blur-2xl"
         >
@@ -22,7 +22,7 @@ export default function Logo() {
 
         {/* Main Logo */}
         <h1
-          className="relative text-[8rem] lg:text-[10rem]
+          className="relative text-[3.5rem] sm:text-[6rem] lg:text-[8rem] xl:text-[10rem]
                      font-extrabold tracking-[-0.06em]
                      text-white leading-none"
         >
