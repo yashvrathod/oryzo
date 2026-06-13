@@ -38,18 +38,18 @@ export default function Home() {
 
   return (
     <>
-      <div className="w-full h-dvh bg-[#0a0a0a] bg-[url('/bg.png')] bg-cover bg-center flex relative overflow-x-hidden">
+      <div className="w-full h-dvh bg-[#0a0a0a] bg-[url('/bg.png')] bg-cover bg-center flex relative overflow-hidden">
         <Navbar/>
         <Logo />
         <KeyboardImage visible={showKeyboard} />
         <MouseImage visible={showKeyboard} />
    <p className="
   absolute
-  left-4 sm:left-auto sm:right-8 lg:right-44
-  bottom-[68%] sm:bottom-[20%] lg:bottom-[22%]
-  max-w-[calc(100vw-2rem)] sm:max-w-[32rem] lg:max-w-[500px]
+  left-4 sm:left-auto sm:right-8 lg:right-1
+  bottom-[68%] sm:bottom-[20%] lg:bottom-[12%]
+  max-w-[calc(100vw-2rem)] sm:max-w-[32rem] lg:max-w-[450px]
   text-left sm:text-left
-  text-[1.3rem] sm:text-[1.8rem] lg:text-[2.2rem]
+  text-[1.3rem] sm:text-[1.8rem] lg:text-[2rem]
   font-medium
   leading-[1.15]
   tracking-[-0.03em]

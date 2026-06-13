@@ -2,7 +2,7 @@
 
 export default function Logo() {
   return (
-    <div className="absolute top-28 left-4 sm:top-16 sm:left-8 lg:top-36 lg:left-12 z-20 select-none">
+    <div className="absolute top-28 left-4 sm:top-16 sm:left-8 lg:top-38 lg:left-12 z-20 select-none">
       <div className="relative">
 
         {/* Small Heading */}

@@ -9,7 +9,7 @@ export default function MouseImage({ visible }: { visible: boolean }) {
       alt=""
       width={1182}
       height={912}
-      className="absolute top-12 left-150 w-98 h-auto pointer-events-none z-30 hidden lg:block"
+      className="absolute h-auto pointer-events-none z-30 hidden lg:block lg:top-2 lg:left-120 lg:w-55 xl:top-4 xl:left-120 xl:w-78 2xl:top-12 2xl:left-150 2xl:w-98"
       style={{
         transform: visible
           ? "translateX(0) rotate(5deg)"
