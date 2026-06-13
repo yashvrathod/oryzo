@@ -44,17 +44,16 @@ export default function Home() {
         <KeyboardImage visible={showKeyboard} />
         <MouseImage visible={showKeyboard} />
    <p className="
-  absolute
-  left-4 sm:left-auto sm:right-8 lg:right-1
-  bottom-[68%] sm:bottom-[20%] lg:bottom-[12%]
-  max-w-[calc(100vw-2rem)] sm:max-w-[32rem] lg:max-w-[450px]
-  text-left sm:text-left
-  text-[1.3rem] sm:text-[1.8rem] lg:text-[2rem]
+  absolute z-20
+  left-3 sm:left-6 lg:left-auto lg:right-8 xl:right-16 2xl:right-24
+  top-36 sm:top-44 lg:top-auto lg:bottom-[15%] xl:bottom-[18%] 2xl:bottom-[20%]
+  max-w-[calc(100vw-1.5rem)] sm:max-w-[28rem] lg:max-w-[380px] xl:max-w-[440px] 2xl:max-w-[500px]
+  text-left
+  text-[1rem] sm:text-[1.3rem] lg:text-[1.6rem] xl:text-[1.9rem] 2xl:text-[2.2rem]
   font-medium
   leading-[1.15]
   tracking-[-0.03em]
   text-white
-  z-20
 ">
  From brute force to optimal solutions—guided by an AI mentor built for DSA.
 </p>

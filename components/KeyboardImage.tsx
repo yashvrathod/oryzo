@@ -9,7 +9,7 @@ export default function KeyboardImage({ visible }: { visible: boolean }) {
       alt=""
       width={1699}
       height={624}
-      className="absolute h-auto pointer-events-none z-30 hidden lg:block lg:top-18 lg:-right-58 lg:w-[40rem] xl:top-16 xl:-right-64 xl:w-[50rem] 2xl:top-31 2xl:-right-62 2xl:w-[60rem]"
+      className="absolute h-auto pointer-events-none z-30 hidden lg:block lg:top-18 lg:-right-58 lg:w-[40rem] xl:top-16 xl:-right-64 xl:w-[50rem] 2xl:top-31 2xl:-right-62 2xl:w-[50rem]"
       style={{
         transform: visible
           ? "translateX(0) rotate(-5deg)"
