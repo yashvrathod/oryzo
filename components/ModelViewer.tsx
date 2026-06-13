@@ -27,10 +27,11 @@ function Model({ onReady, viewport, zoomProgress, rotationProgress, centerProgre
     onReady?.()
   }, [scene, onReady])
 
-  const rotationY = (rotationProgress ?? 0) * Math.PI * 2 * (1 - (centerProgress ?? 0))
-  const positionY = (baseY + effectiveZoom * 0.15) * (1 - (centerProgress ?? 0)) + (cardProgress ?? 0) * 0.6
+  const rotationY = (rotationProgress ?? 0) * Math.PI * 2 * (1 - (centerProgress ?? 0)) + (cardProgress ?? 0) * Math.PI * 2
+  const positionY = (baseY + effectiveZoom * 0.15) * (1 - (centerProgress ?? 0)) + (cardProgress ?? 0) * 1.2
+  const positionX = (cardProgress ?? 0) * 2
 
-  return <primitive object={scene} scale={scale} position={[0, positionY, 0]} rotation={[0, rotationY, 0]} />
+  return <primitive object={scene} scale={scale} position={[positionX, positionY, 0]} rotation={[0, rotationY, 0]} />
 }
 
 function MoonFloor({ viewport, zoomProgress }: { viewport: "mobile" | "tablet" | "smDesktop" | "desktop"; zoomProgress: number }) {
