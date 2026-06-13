@@ -5,14 +5,15 @@ import { Canvas } from "@react-three/fiber"
 import { useGLTF, Environment, useTexture } from "@react-three/drei"
 import * as THREE from "three"
 
-function Model({ onReady, viewport, zoomProgress }: { onReady?: () => void; viewport: "mobile" | "tablet" | "smDesktop" | "desktop"; zoomProgress: number }) {
+function Model({ onReady, viewport, zoomProgress, rotationProgress }: { onReady?: () => void; viewport: "mobile" | "tablet" | "smDesktop" | "desktop"; zoomProgress: number; rotationProgress?: number }) {
   const { scene } = useGLTF("/models/CodeGhost.glb")
 
   const baseScale = viewport === "mobile" ? 0.5 : viewport === "tablet" ? 0.65 : viewport === "smDesktop" ? 0.7 : 0.8
   const baseY = viewport === "mobile" ? -0.3 : viewport === "tablet" ? -0.35 : viewport === "smDesktop" ? -0.38 : -0.4
 
-  const scale = baseScale * (1 + zoomProgress * 0.6)
-  const positionY = baseY + zoomProgress * 0.15
+  const effectiveZoom = zoomProgress * (1 - (rotationProgress ?? 0))
+  const scale = baseScale * (1 + effectiveZoom * 0.6)
+  const positionY = baseY + effectiveZoom * 0.15
 
   useEffect(() => {
     scene.traverse((child) => {
@@ -26,7 +27,9 @@ function Model({ onReady, viewport, zoomProgress }: { onReady?: () => void; view
     onReady?.()
   }, [scene, onReady])
 
-  return <primitive object={scene} scale={scale} position={[0, positionY, 0]} />
+  const rotationY = (rotationProgress ?? 0) * Math.PI * 2
+
+  return <primitive object={scene} scale={scale} position={[0, positionY, 0]} rotation={[0, rotationY, 0]} />
 }
 
 function MoonFloor({ viewport, zoomProgress }: { viewport: "mobile" | "tablet" | "smDesktop" | "desktop"; zoomProgress: number }) {
@@ -51,7 +54,7 @@ function MoonFloor({ viewport, zoomProgress }: { viewport: "mobile" | "tablet" |
   )
 }
 
-export default function ModelViewer({ onLoaded, zoomProgress = 0 }: { onLoaded?: () => void; zoomProgress?: number }) {
+export default function ModelViewer({ onLoaded, zoomProgress = 0, rotationProgress = 0 }: { onLoaded?: () => void; zoomProgress?: number; rotationProgress?: number }) {
   const [viewport, setViewport] = useState<"mobile" | "tablet" | "smDesktop" | "desktop">("desktop")
 
   useEffect(() => {
@@ -92,7 +95,7 @@ export default function ModelViewer({ onLoaded, zoomProgress = 0 }: { onLoaded?:
           shadow-mapSize-height={1024}
         />
         <directionalLight position={[-5, -5, -5]} intensity={0.5} />
-        <Model onReady={onLoaded} viewport={viewport} zoomProgress={zoomProgress} />
+        <Model onReady={onLoaded} viewport={viewport} zoomProgress={zoomProgress} rotationProgress={rotationProgress} />
         {/* <MoonFloor viewport={viewport} zoomProgress={zoomProgress} /> */}
         <Environment preset="city" />
       </Canvas>

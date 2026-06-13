@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 const heading = Plus_Jakarta_Sans({
   variable: "--font-heading",
   subsets: ["latin"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
