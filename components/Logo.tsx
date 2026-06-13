@@ -52,7 +52,7 @@ const translateY = eased * -118
           <h1
             className="relative text-[2.8rem] sm:text-[4.5rem] lg:text-[6.5rem] xl:text-[8.5rem] 2xl:text-[10rem]
                        font-extrabold tracking-[-0.06em]
-                       text-[#f5ece0] leading-none"
+                       text-[#f5ece0] leading-none font-heading"
           >
             neXode
           </h1>

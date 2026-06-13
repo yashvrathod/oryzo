@@ -42,17 +42,16 @@ export default function Home() {
     return () => lenis.destroy()
   }, [])
 
-  const fadeStart = 0
+  // Fade-out range for bg, tagline, images (0–400px)
   const fadeEnd = 400
-
   const progress = Math.min(
-    Math.max((scrollY - fadeStart) / (fadeEnd - fadeStart), 0),
+    Math.max((scrollY - 0) / fadeEnd, 0),
     1
   )
 
+  // Logo transition range (300–600px)
   const logoStart = 300
   const logoEnd = 600
-
   const logoProgress = Math.min(
     Math.max((scrollY - logoStart) / (logoEnd - logoStart), 0),
     1
@@ -61,10 +60,23 @@ export default function Home() {
   const fadeOutOpacity = 1 - progress
   const fadeOutTranslateY = -progress * 120
 
+  // Zoom range covers the full word reveal (0–500px)
+  const zoomEnd = 500
+  const zoomProgress = Math.min(
+    Math.max((scrollY - 0) / zoomEnd, 0),
+    1
+  )
+  const sideTextProgress = Math.min(Math.max((zoomProgress - 0.28) / 0.72, 0), 1)
+
+  const staggerWord = (p: number, index: number, step = 0.07, dur = 0.25) => {
+    const wp = Math.min(Math.max((p - index * step) / dur, 0), 1)
+    return { opacity: wp, transform: `translateY(${(1 - wp) * 24}px)` }
+  }
+
   return (
     <>
       <div className="relative min-h-[200dvh]">
-        <div className="sticky top-0 w-full h-dvh bg-[#0a0a0a] flex overflow-hidden">
+        <div className="sticky top-0 w-full h-dvh bg-[#140e0a] flex overflow-hidden">
           {/* Background - fades out on scroll */}
           <div
             className="absolute inset-0 bg-[url('/newbg.png')] bg-cover bg-center"
@@ -73,7 +85,7 @@ export default function Home() {
 
           {/* Model - stays visible */}
           <div className="w-full h-full">
-            <ModelViewer onLoaded={onModelLoaded} zoomProgress={progress} />
+            <ModelViewer onLoaded={onModelLoaded} zoomProgress={zoomProgress} />
           </div>
 
           {/* Content */}
@@ -98,6 +110,41 @@ export default function Home() {
 </p>
           <NotesImage visible={showKeyboard} scrollOpacity={fadeOutOpacity} scrollTranslateY={fadeOutTranslateY} />
           <MarkerImage visible={showKeyboard} scrollOpacity={fadeOutOpacity} scrollTranslateY={fadeOutTranslateY} />
+
+          {/* Side text — staggered reveal on scroll */}
+          <div
+            className="absolute z-20 hidden lg:block left-4 lg:left-10 xl:left-14 2xl:left-50 top-[50%] "
+            style={{
+              transform: `translateX(${(-40 + 40 * (1 - sideTextProgress))}px) translateY(-50%)`,
+            }}
+          >
+            <h2 className="text-[2.2rem] xl:text-[2.7rem] 2xl:text-[3.2rem] font-bold tracking-[-0.04em] text-[#f5ece0] leading-[1.5] font-heading">
+              {["AI-POWERED", "DSA", "COACHING"].map((word, i) => {
+                const p = staggerWord(sideTextProgress, 2 - i, 0.25, 0.45)
+                return (
+                  <span key={i}>
+                    {i === 1 ? <br /> : null}
+                    <span className="inline-block" style={p}>{word}</span>
+                    {i < 2 ? ' ' : ''}
+                  </span>
+                )
+              })}
+            </h2>
+          </div>
+
+          <div
+            className="absolute z-20 hidden lg:block right-4 lg:right-10 xl:right-14 2xl:right-50 top-[50%] max-w-[260px] xl:max-w-[300px] 2xl:max-w-[360px]"
+            style={{
+              transform: `translateX(${(40 - 40 * (1 - sideTextProgress))}px) translateY(-50%)`,
+            }}
+          >
+            <p className="text-[0.9rem] xl:text-[1rem] 2xl:text-[2rem] font-medium leading-[1.4] text-[#f5ece0]/80 flex flex-wrap" style={{ gap: '0.35em' }}>
+              {"Get real-time feedback, adaptive problem sets, and personalized guidance tailored to your skill level.".split(" ").map((word, i) => {
+                const p = staggerWord(sideTextProgress, i, 0.05, 0.25)
+                return <span key={i} style={p}>{word}</span>
+              })}
+            </p>
+          </div>
         </div>
       </div>
 
