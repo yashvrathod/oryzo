@@ -38,7 +38,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="w-full h-dvh bg-[#0a0a0a] bg-[url('/bg.png')] bg-cover bg-center flex relative overflow-hidden">
+      <div className="w-full h-dvh bg-[#0a0a0a] bg-[url('/newbg.png')] bg-cover bg-center flex relative overflow-hidden">
         <Navbar/>
         <Logo />
         <KeyboardImage visible={showKeyboard} />
