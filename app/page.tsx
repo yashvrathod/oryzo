@@ -113,6 +113,12 @@ export default function Home() {
     1
   )
 
+  // Card phase — HUD box becomes a transparent card after marquee scales up (3600–4100px)
+  const cardProgress = Math.min(
+    Math.max((scrollY - 3600) / 500, 0),
+    1
+  )
+
   const staggerWord = (p: number, index: number, step = 0.07, dur = 0.25) => {
     const wp = Math.min(Math.max((p - index * step) / dur, 0), 1)
     return { opacity: wp, transform: `translateY(${(1 - wp) * 24}px)` }
@@ -130,11 +136,11 @@ export default function Home() {
 
           {/* Model - stays visible */}
           <div className="w-full h-full relative z-[2]">
-            <ModelViewer onLoaded={onModelLoaded} zoomProgress={zoomProgress} rotationProgress={rotationProgress} centerProgress={modelCenterProgress} />
+            <ModelViewer onLoaded={onModelLoaded} zoomProgress={zoomProgress} rotationProgress={rotationProgress} centerProgress={modelCenterProgress} cardProgress={cardProgress} />
           </div>
 
           {/* Kinetic marquee — behind model, visible during HUD phase */}
-          <KineticMarquee progress={marqueeProgress} opacity={marqueeProgress} />
+          <KineticMarquee progress={marqueeProgress} opacity={marqueeProgress} cardProgress={cardProgress} />
 
           {/* Content */}
           <Navbar />
@@ -252,7 +258,7 @@ export default function Home() {
           </div> */}
 
           {/* HUD overlay */}
-          <HudOverlay progress={hudProgress} />
+          <HudOverlay progress={hudProgress} cardProgress={cardProgress} />
 
           {/* Rotation phase: hand from bottom */}
           <div

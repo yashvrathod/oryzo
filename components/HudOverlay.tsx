@@ -1,6 +1,6 @@
 "use client"
 
-export default function HudOverlay({ progress = 0 }: { progress?: number }) {
+export default function HudOverlay({ progress = 0, cardProgress = 0 }: { progress?: number; cardProgress?: number }) {
   const mainRing = Math.min(Math.max((progress - 0) / 0.4, 0), 1)
   const frameRect = Math.min(Math.max((progress - 0.3) / 0.4, 0), 1)
   const detailsShow = Math.min(Math.max((progress - 0.6) / 0.4, 0), 1)
@@ -13,7 +13,7 @@ export default function HudOverlay({ progress = 0 }: { progress?: number }) {
   })
   const ringVisible = Math.floor(ringDots * mainRing)
 
-  const rectX = 24, rectY = 24, rectW = 352, rectH = 352
+  const rectX = 48, rectY = 48, rectW = 304, rectH = 304
   const dotsPerSide = 20
   const rectPositions = []
   for (let i = 0; i < dotsPerSide; i++) {
@@ -48,87 +48,101 @@ export default function HudOverlay({ progress = 0 }: { progress?: number }) {
         viewBox="0 0 400 400"
         className="w-[260px] h-[260px] sm:w-[320px] sm:h-[320px] lg:w-[420px] lg:h-[420px] xl:w-[500px] xl:h-[500px] 2xl:w-[580px] 2xl:h-[580px]"
       >
-        {/* Orbital ring dots */}
-        <g style={{ transformOrigin: "200px 200px", animation: "hud-rotate 20s linear infinite" }}>
-          {ringPositions.map((p, i) => (
-            <circle key={i} cx={p.x} cy={p.y} r="2" fill="#f5ece0" opacity={i < ringVisible ? 0.5 : 0} />
+        {/* Inner elements (circles, ring ticks, crosshair, floating dot) — fade up + disappear on card phase */}
+        <g style={{ opacity: 1 - cardProgress, transform: `translateY(${-cardProgress * 20}px)`, transition: cardProgress > 0 && cardProgress < 1 ? 'none' : undefined }}>
+          {/* Orbital ring dots */}
+          <g style={{ transformOrigin: "200px 200px", animation: "hud-rotate 20s linear infinite" }}>
+            {ringPositions.map((p, i) => (
+              <circle key={i} cx={p.x} cy={p.y} r="2" fill="#f5ece0" opacity={i < ringVisible ? 0.5 : 0} />
+            ))}
+          </g>
+
+          {/* Inner counter-rotating ring dots */}
+          <g
+            style={{
+              transformOrigin: "200px 200px",
+              animation: innerRing > 0.5 ? "hud-counter-rotate 30s linear infinite" : "none",
+              opacity: innerRing,
+            }}
+          >
+            {innerPositions.map((p, i) => (
+              <circle key={i} cx={p.x} cy={p.y} r="1.5" fill="#f5ece0" opacity={i < innerVisible ? 0.3 : 0} />
+            ))}
+          </g>
+
+          {/* Cardinal ticks on ring — phase 1 */}
+          <g opacity={mainRing * 0.5}>
+            <line x1="200" y1="70" x2="200" y2="80" stroke="#f5ece0" strokeWidth="1.5" />
+            <line x1="200" y1="320" x2="200" y2="330" stroke="#f5ece0" strokeWidth="1.5" />
+            <line x1="70" y1="200" x2="80" y2="200" stroke="#f5ece0" strokeWidth="1.5" />
+            <line x1="320" y1="200" x2="330" y2="200" stroke="#f5ece0" strokeWidth="1.5" />
+          </g>
+
+          {/* Crosshair lines — phase 3 */}
+          <g opacity={detailsShow * 0.25}>
+            <line x1="140" y1="200" x2="170" y2="200" stroke="#f5ece0" strokeWidth="0.5" />
+            <line x1="230" y1="200" x2="260" y2="200" stroke="#f5ece0" strokeWidth="0.5" />
+            <line x1="200" y1="140" x2="200" y2="170" stroke="#f5ece0" strokeWidth="0.5" />
+            <line x1="200" y1="230" x2="200" y2="260" stroke="#f5ece0" strokeWidth="0.5" />
+          </g>
+
+          {/* Floating indicator dot — phase 3 */}
+          <g opacity={detailsShow}>
+            <circle cx="200" cy="70" r="3" fill="#f5ece0" opacity={0.4 + detailsShow * 0.6}>
+              <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="200" cy="70" r="7" fill="none" stroke="#f5ece0" strokeWidth="0.5" opacity={0.1 + detailsShow * 0.2}>
+              <animate attributeName="r" values="7;12;7" dur="2s" repeatCount="indefinite" />
+            </circle>
+          </g>
+        </g>
+
+        {/* Outer box elements — scale up + stretch vertically into a tall rectangle on card phase */}
+        <g transform={`translate(200, 200) scale(${1 - cardProgress * 0.15}, ${1 + cardProgress * 0.3}) translate(-200, -200)`}>
+          {/* Glass background — transparent card fill */}
+          <rect x="48" y="48" width="304" height="304" rx="12"
+            fill={`rgba(20, 14, 10, ${cardProgress * 0.25})`}
+            stroke={`rgba(245, 236, 224, ${cardProgress * 0.35})`}
+            strokeWidth={`${1 + cardProgress * 1.5}`}
+            opacity={cardProgress}
+          />
+
+          {/* Rect frame dots */}
+          {rectPositions.map((p, i) => (
+            <circle key={i} cx={p.x} cy={p.y} r="2" fill="#f5ece0" opacity={i < rectVisible ? 0.35 : 0} />
           ))}
-        </g>
 
-        {/* Inner counter-rotating ring dots */}
-        <g
-          style={{
-            transformOrigin: "200px 200px",
-            animation: innerRing > 0.5 ? "hud-counter-rotate 30s linear infinite" : "none",
-            opacity: innerRing,
-          }}
-        >
-          {innerPositions.map((p, i) => (
-            <circle key={i} cx={p.x} cy={p.y} r="1.5" fill="#f5ece0" opacity={i < innerVisible ? 0.3 : 0} />
-          ))}
-        </g>
+          {/* Corner brackets — fade in during phase 2 */}
+          <g opacity={frameRect * 0.6}>
+            <path d="M48 80 L48 48 L80 48" fill="none" stroke="#f5ece0" strokeWidth="2" />
+            <path d="M352 80 L352 48 L320 48" fill="none" stroke="#f5ece0" strokeWidth="2" />
+            <path d="M48 352 L48 320 L80 352" fill="none" stroke="#f5ece0" strokeWidth="2" />
+            <path d="M352 352 L352 320 L320 352" fill="none" stroke="#f5ece0" strokeWidth="2" />
+          </g>
 
-        {/* Rect frame dots */}
-        {rectPositions.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r="2" fill="#f5ece0" opacity={i < rectVisible ? 0.35 : 0} />
-        ))}
+          {/* Mid-edge ticks — phase 2 */}
+          <g opacity={frameRect * 0.4}>
+            <line x1="192" y1="48" x2="208" y2="48" stroke="#f5ece0" strokeWidth="1" />
+            <line x1="192" y1="352" x2="208" y2="352" stroke="#f5ece0" strokeWidth="1" />
+            <line x1="48" y1="192" x2="48" y2="208" stroke="#f5ece0" strokeWidth="1" />
+            <line x1="352" y1="192" x2="352" y2="208" stroke="#f5ece0" strokeWidth="1" />
+          </g>
 
-        {/* Corner brackets — fade in during phase 2 */}
-        <g opacity={frameRect * 0.6}>
-          <path d="M24 56 L24 24 L56 24" fill="none" stroke="#f5ece0" strokeWidth="2" />
-          <path d="M376 56 L376 24 L344 24" fill="none" stroke="#f5ece0" strokeWidth="2" />
-          <path d="M24 344 L24 376 L56 376" fill="none" stroke="#f5ece0" strokeWidth="2" />
-          <path d="M376 344 L376 376 L344 376" fill="none" stroke="#f5ece0" strokeWidth="2" />
-        </g>
+          {/* Sub-cardinal ticks — phase 2 */}
+          <g opacity={frameRect * 0.3}>
+            <line x1="124" y1="124" x2="133" y2="133" stroke="#f5ece0" strokeWidth="1" />
+            <line x1="276" y1="124" x2="267" y2="133" stroke="#f5ece0" strokeWidth="1" />
+            <line x1="124" y1="276" x2="133" y2="267" stroke="#f5ece0" strokeWidth="1" />
+            <line x1="276" y1="276" x2="267" y2="267" stroke="#f5ece0" strokeWidth="1" />
+          </g>
 
-        {/* Mid-edge ticks — phase 2 */}
-        <g opacity={frameRect * 0.4}>
-          <line x1="188" y1="24" x2="212" y2="24" stroke="#f5ece0" strokeWidth="1" />
-          <line x1="188" y1="376" x2="212" y2="376" stroke="#f5ece0" strokeWidth="1" />
-          <line x1="24" y1="188" x2="24" y2="212" stroke="#f5ece0" strokeWidth="1" />
-          <line x1="376" y1="188" x2="376" y2="212" stroke="#f5ece0" strokeWidth="1" />
-        </g>
-
-        {/* Cardinal ticks on ring — phase 1 */}
-        <g opacity={mainRing * 0.5}>
-          <line x1="200" y1="70" x2="200" y2="80" stroke="#f5ece0" strokeWidth="1.5" />
-          <line x1="200" y1="320" x2="200" y2="330" stroke="#f5ece0" strokeWidth="1.5" />
-          <line x1="70" y1="200" x2="80" y2="200" stroke="#f5ece0" strokeWidth="1.5" />
-          <line x1="320" y1="200" x2="330" y2="200" stroke="#f5ece0" strokeWidth="1.5" />
-        </g>
-
-        {/* Sub-cardinal ticks — phase 2 */}
-        <g opacity={frameRect * 0.3}>
-          <line x1="108" y1="108" x2="117" y2="117" stroke="#f5ece0" strokeWidth="1" />
-          <line x1="292" y1="108" x2="283" y2="117" stroke="#f5ece0" strokeWidth="1" />
-          <line x1="108" y1="292" x2="117" y2="283" stroke="#f5ece0" strokeWidth="1" />
-          <line x1="292" y1="292" x2="283" y2="283" stroke="#f5ece0" strokeWidth="1" />
-        </g>
-
-        {/* Crosshair lines — phase 3 */}
-        <g opacity={detailsShow * 0.25}>
-          <line x1="140" y1="200" x2="170" y2="200" stroke="#f5ece0" strokeWidth="0.5" />
-          <line x1="230" y1="200" x2="260" y2="200" stroke="#f5ece0" strokeWidth="0.5" />
-          <line x1="200" y1="140" x2="200" y2="170" stroke="#f5ece0" strokeWidth="0.5" />
-          <line x1="200" y1="230" x2="200" y2="260" stroke="#f5ece0" strokeWidth="0.5" />
-        </g>
-
-        {/* Floating indicator dot — phase 3 */}
-        <g opacity={detailsShow}>
-          <circle cx="200" cy="70" r="3" fill="#f5ece0" opacity={0.4 + detailsShow * 0.6}>
-            <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="200" cy="70" r="7" fill="none" stroke="#f5ece0" strokeWidth="0.5" opacity={0.1 + detailsShow * 0.2}>
-            <animate attributeName="r" values="7;12;7" dur="2s" repeatCount="indefinite" />
-          </circle>
-        </g>
-
-        {/* Data label dashes — phase 2 */}
-        <g opacity={frameRect * 0.5}>
-          <line x1="58" y1="60" x2="76" y2="60" stroke="#f5ece0" strokeWidth="1.5" />
-          <line x1="58" y1="66" x2="68" y2="66" stroke="#f5ece0" strokeWidth="1.5" />
-          <line x1="324" y1="60" x2="342" y2="60" stroke="#f5ece0" strokeWidth="1.5" />
-          <line x1="332" y1="66" x2="342" y2="66" stroke="#f5ece0" strokeWidth="1.5" />
+          {/* Data label dashes — phase 2 */}
+          <g opacity={frameRect * 0.5}>
+            <line x1="82" y1="84" x2="100" y2="84" stroke="#f5ece0" strokeWidth="1.5" />
+            <line x1="82" y1="90" x2="92" y2="90" stroke="#f5ece0" strokeWidth="1.5" />
+            <line x1="300" y1="84" x2="318" y2="84" stroke="#f5ece0" strokeWidth="1.5" />
+            <line x1="308" y1="90" x2="318" y2="90" stroke="#f5ece0" strokeWidth="1.5" />
+          </g>
         </g>
       </svg>
     </div>
