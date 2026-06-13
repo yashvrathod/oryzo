@@ -3,6 +3,8 @@
 import { useState, useCallback, useEffect, useRef } from "react"
 import Lenis from "lenis"
 import ModelViewer from "@/components/ModelViewer"
+import HudOverlay from "@/components/HudOverlay"
+import KineticMarquee from "@/components/KineticMarquee"
 import KeyboardImage from "@/components/KeyboardImage"
 import MouseImage from "@/components/MouseImage"
 import Logo from "@/components/Logo"
@@ -96,6 +98,21 @@ export default function Home() {
   const finalFadeUpY = -finalFadeProgress * 40
   const finalFadeDownY = finalFadeProgress * 60
 
+  // HUD appears after everything fades out (2100–2400px)
+  const hudProgress = Math.min(
+    Math.max((scrollY - 2100) / 300, 0),
+    1
+  )
+
+  // Model centers + faces straight alongside HUD build-up (2100–2400px)
+  const modelCenterProgress = hudProgress
+
+  // Marquee scrolls right to left after dots are connected (2400–3600px)
+  const marqueeProgress = Math.min(
+    Math.max((scrollY - 2400) / 1200, 0),
+    1
+  )
+
   const staggerWord = (p: number, index: number, step = 0.07, dur = 0.25) => {
     const wp = Math.min(Math.max((p - index * step) / dur, 0), 1)
     return { opacity: wp, transform: `translateY(${(1 - wp) * 24}px)` }
@@ -103,7 +120,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="relative min-h-[500dvh]">
+      <div className="relative min-h-[700dvh]">
         <div className="sticky top-0 w-full h-dvh bg-[#140e0a] flex overflow-hidden">
           {/* Background - fades out on scroll */}
           <div
@@ -112,9 +129,12 @@ export default function Home() {
           />
 
           {/* Model - stays visible */}
-          <div className="w-full h-full">
-            <ModelViewer onLoaded={onModelLoaded} zoomProgress={zoomProgress} rotationProgress={rotationProgress} />
+          <div className="w-full h-full relative z-[2]">
+            <ModelViewer onLoaded={onModelLoaded} zoomProgress={zoomProgress} rotationProgress={rotationProgress} centerProgress={modelCenterProgress} />
           </div>
+
+          {/* Kinetic marquee — behind model, visible during HUD phase */}
+          <KineticMarquee progress={marqueeProgress} opacity={marqueeProgress} />
 
           {/* Content */}
           <Navbar />
@@ -230,6 +250,9 @@ export default function Home() {
               style={{ filter: `drop-shadow(0 ${20 * (1 - rotationTextProgress)}px ${30 * (1 - rotationTextProgress)}px rgba(0,0,0,0.5))` }}
             />
           </div> */}
+
+          {/* HUD overlay */}
+          <HudOverlay progress={hudProgress} />
 
           {/* Rotation phase: hand from bottom */}
           <div

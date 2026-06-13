@@ -28,4 +28,14 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@keyframes hud-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes hud-counter-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
 
