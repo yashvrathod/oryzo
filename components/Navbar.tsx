@@ -80,11 +80,19 @@ export default function Navbar() {
       </div>
 
       {/* Right Vertical Label */}
-     <div className="absolute right-0 z-50 bg-[#f5ece0]/90 backdrop-blur-md hidden lg:block -translate-y-1/2
-                     lg:top-[18%] lg:py-20
-                     xl:top-[22%] xl:py-24
-                     2xl:top-1/4 2xl:py-30">
-  <span className="block rotate-90 origin-center whitespace-nowrap text-[12px] font-bold uppercase tracking-[0.25em] text-black">
+    <div
+  className="
+    absolute right-0 z-50
+    w-18
+    py-28
+    flex items-center justify-center
+    bg-[#f5ece0]/90 backdrop-blur-md
+    hidden lg:flex
+    -translate-y-1/2
+    top-1/4
+  "
+>
+  <span className="rotate-90 whitespace-nowrap text-[14px] font-semibold uppercase tracking-wider text-black">
     neXode • AI DSA Mentor
   </span>
 </div>
