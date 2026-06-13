@@ -6,7 +6,7 @@ export default function Logo() {
       <div className="relative">
 
         {/* Small Heading */}
-        <p className="mb-1.5 sm:mb-2 lg:mb-3 ml-0.5 sm:ml-1 text-[9px] sm:text-[10px] lg:text-xs font-semibold uppercase tracking-[0.3em] text-white/70">
+        <p className="mb-1.5 sm:mb-2 lg:mb-3 ml-0.5 sm:ml-1 text-[9px] sm:text-[10px] lg:text-xs font-semibold uppercase tracking-[0.3em] text-[#f5ece0]/80">
           Personalized AI guidance for coding interviews.
         </p>
 
@@ -24,7 +24,7 @@ export default function Logo() {
         <h1
           className="relative text-[2.8rem] sm:text-[4.5rem] lg:text-[6.5rem] xl:text-[8.5rem] 2xl:text-[10rem]
                      font-extrabold tracking-[-0.06em]
-                     text-white leading-none"
+                     text-[#f5ece0] leading-none"
         >
           neXode
         </h1>

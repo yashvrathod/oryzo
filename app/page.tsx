@@ -53,7 +53,7 @@ export default function Home() {
   font-medium
   leading-[1.15]
   tracking-[-0.03em]
-  text-white
+  text-[#f5ece0]
 ">
  From brute force to optimal solutions—guided by an AI mentor built for DSA.
 </p>
