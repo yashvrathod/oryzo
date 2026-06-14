@@ -134,7 +134,7 @@ export default function Home() {
   return (
     <>
       <div className="relative min-h-[800dvh]">
-        <div className="sticky top-0 w-full h-dvh bg-[#140e0a] flex overflow-hidden">
+        <div className="sticky top-0 w-full h-dvh flex overflow-hidden bg-transparent">
           {/* Background - fades out on scroll */}
           <div
             className="absolute inset-0 bg-[url('/newbg.png')] bg-cover bg-center"
@@ -143,7 +143,7 @@ export default function Home() {
 
           {/* Model - stays visible */}
           <div className="w-full h-full relative z-[2]">
-            <ModelViewer onLoaded={onModelLoaded} zoomProgress={zoomProgress} rotationProgress={rotationProgress} centerProgress={modelCenterProgress} cardProgress={cardProgress} />
+            <ModelViewer onLoaded={onModelLoaded} zoomProgress={zoomProgress} rotationProgress={rotationProgress} centerProgress={modelCenterProgress} cardProgress={cardProgress} slideProgress={carouselSlide} />
           </div>
 
           {/* Kinetic marquee — behind model, visible during HUD phase */}
@@ -234,7 +234,7 @@ export default function Home() {
 
           {/* Carousel — 5 cards cycle one by one as you scroll */}
           <CarouselCards
-            images={["/bg.png", "/bg.png", "/bg.png", "/bg.png", "/bg.png"]}
+            images={["/f1.png", "__saas_feature__", "/bg.png", "/bg.png", "/bg.png"]}
             cardProgress={cardProgress}
             slideProgress={carouselSlide}
           />
@@ -275,7 +275,7 @@ export default function Home() {
         </div>
       </div>
 
-      <section className="h-dvh bg-black" />
+      <section className="h-dvh" style={{ background: '#b87333' }} />
     </>
   )
 }

@@ -5,7 +5,7 @@ import { Canvas } from "@react-three/fiber"
 import { useGLTF, Environment, useTexture } from "@react-three/drei"
 import * as THREE from "three"
 
-function Model({ onReady, viewport, zoomProgress, rotationProgress, centerProgress, cardProgress }: { onReady?: () => void; viewport: "mobile" | "tablet" | "smDesktop" | "desktop"; zoomProgress: number; rotationProgress?: number; centerProgress?: number; cardProgress?: number }) {
+function Model({ onReady, viewport, zoomProgress, rotationProgress, centerProgress, cardProgress, slideProgress }: { onReady?: () => void; viewport: "mobile" | "tablet" | "smDesktop" | "desktop"; zoomProgress: number; rotationProgress?: number; centerProgress?: number; cardProgress?: number; slideProgress?: number }) {
   const { scene } = useGLTF("/models/CodeGhost.glb")
 
   const baseScale = viewport === "mobile" ? 0.5 : viewport === "tablet" ? 0.65 : viewport === "smDesktop" ? 0.7 : 0.8
@@ -13,7 +13,8 @@ function Model({ onReady, viewport, zoomProgress, rotationProgress, centerProgre
 
   const effectiveZoom = zoomProgress * (1 - (rotationProgress ?? 0))
   const cardScaleFactor = 1 - (cardProgress ?? 0) * 0.3
-  const scale = baseScale * (1 + effectiveZoom * 0.6) * cardScaleFactor
+  const slideScaleFactor = 1 - (slideProgress ?? 0) * 0.4
+  const scale = baseScale * (1 + effectiveZoom * 0.6) * cardScaleFactor * slideScaleFactor
 
   useEffect(() => {
     scene.traverse((child) => {
@@ -56,7 +57,7 @@ function MoonFloor({ viewport, zoomProgress }: { viewport: "mobile" | "tablet" |
   )
 }
 
-export default function ModelViewer({ onLoaded, zoomProgress = 0, rotationProgress = 0, centerProgress = 0, cardProgress = 0 }: { onLoaded?: () => void; zoomProgress?: number; rotationProgress?: number; centerProgress?: number; cardProgress?: number }) {
+export default function ModelViewer({ onLoaded, zoomProgress = 0, rotationProgress = 0, centerProgress = 0, cardProgress = 0, slideProgress = 0 }: { onLoaded?: () => void; zoomProgress?: number; rotationProgress?: number; centerProgress?: number; cardProgress?: number; slideProgress?: number }) {
   const [viewport, setViewport] = useState<"mobile" | "tablet" | "smDesktop" | "desktop">("desktop")
 
   useEffect(() => {
@@ -97,7 +98,7 @@ export default function ModelViewer({ onLoaded, zoomProgress = 0, rotationProgre
           shadow-mapSize-height={1024}
         />
         <directionalLight position={[-5, -5, -5]} intensity={0.5} />
-        <Model onReady={onLoaded} viewport={viewport} zoomProgress={zoomProgress} rotationProgress={rotationProgress} centerProgress={centerProgress} cardProgress={cardProgress} />
+        <Model onReady={onLoaded} viewport={viewport} zoomProgress={zoomProgress} rotationProgress={rotationProgress} centerProgress={centerProgress} cardProgress={cardProgress} slideProgress={slideProgress} />
         {/* <MoonFloor viewport={viewport} zoomProgress={zoomProgress} /> */}
         <Environment preset="city" />
       </Canvas>

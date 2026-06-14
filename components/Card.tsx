@@ -9,7 +9,7 @@ interface CardProps {
 export default function Card({ imageSrc, progress, className = "" }: CardProps) {
   return (
     <div
-      className={`overflow-hidden rounded-2xl ${className}`}
+      className={`overflow-hidden p-2 rounded-lg border-2 border-dashed border-white/70 ${className}`}
       style={{
         opacity: 1,
         transform: `translateY(${(1 - progress) * 40}px)`,
