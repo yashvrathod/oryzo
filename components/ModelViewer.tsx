@@ -12,25 +12,51 @@ function Model({ onReady, viewport, zoomProgress, rotationProgress, centerProgre
   const baseY = viewport === "mobile" ? -0.3 : viewport === "tablet" ? -0.35 : viewport === "smDesktop" ? -0.38 : -0.4
 
   const effectiveZoom = zoomProgress * (1 - (rotationProgress ?? 0))
-  const cardScaleFactor = 1 - (cardProgress ?? 0) * 0.3
-  const slideScaleFactor = 1 - (slideProgress ?? 0) * 0.4
-  const scale = baseScale * (1 + effectiveZoom * 0.6) * cardScaleFactor * slideScaleFactor
+  const scale = baseScale * (1 + effectiveZoom * 0.6)
 
   useEffect(() => {
     scene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
-        const mat = child.material as THREE.MeshStandardMaterial
+        const mat = child.material
         if (mat) {
-          mat.envMapIntensity = 1.2
+          if (Array.isArray(mat)) {
+            mat.forEach(m => {
+              m.envMapIntensity = 1.2
+              m.transparent = true
+              m.opacity = 1 - (cardProgress ?? 0)
+              m.depthWrite = true
+            })
+          } else {
+            mat.envMapIntensity = 1.2
+            mat.transparent = true
+            mat.opacity = 1 - (cardProgress ?? 0)
+            mat.depthWrite = true
+          }
         }
       }
     })
     onReady?.()
   }, [scene, onReady])
 
-  const rotationY = (rotationProgress ?? 0) * Math.PI * 2 * (1 - (centerProgress ?? 0)) + (cardProgress ?? 0) * Math.PI * 2
-  const positionY = (baseY + effectiveZoom * 0.15) * (1 - (centerProgress ?? 0)) + (cardProgress ?? 0) * 1.2
-  const positionX = (cardProgress ?? 0) * 2
+  useEffect(() => {
+    scene.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        const mat = child.material
+        if (mat) {
+          const op = 1 - (cardProgress ?? 0)
+          if (Array.isArray(mat)) {
+            mat.forEach(m => { m.opacity = op })
+          } else {
+            mat.opacity = op
+          }
+        }
+      }
+    })
+  }, [scene, cardProgress])
+
+  const rotationY = (rotationProgress ?? 0) * Math.PI * 2 * (1 - (centerProgress ?? 0))
+  const positionY = (baseY + effectiveZoom * 0.15) * (1 - (centerProgress ?? 0))
+  const positionX = 0
 
   return <primitive object={scene} scale={scale} position={[positionX, positionY, 0]} rotation={[0, rotationY, 0]} />
 }
@@ -89,17 +115,16 @@ export default function ModelViewer({ onLoaded, zoomProgress = 0, rotationProgre
         onCreated={({ gl }) => { gl.setClearColor(0x000000, 0) }}
         shadows
       >
-        <ambientLight intensity={0.3} />
+        <ambientLight intensity={0.5} />
         <directionalLight
           position={[5, 8, 5]}
-          intensity={2}
+          intensity={3}
           castShadow
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
         />
-        <directionalLight position={[-5, -5, -5]} intensity={0.5} />
+        <directionalLight position={[-5, -5, -5]} intensity={0.8} />
         <Model onReady={onLoaded} viewport={viewport} zoomProgress={zoomProgress} rotationProgress={rotationProgress} centerProgress={centerProgress} cardProgress={cardProgress} slideProgress={slideProgress} />
-        {/* <MoonFloor viewport={viewport} zoomProgress={zoomProgress} /> */}
         <Environment preset="city" />
       </Canvas>
     </div>

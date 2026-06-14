@@ -234,7 +234,7 @@ export default function Home() {
 
           {/* Carousel — 5 cards cycle one by one as you scroll */}
           <CarouselCards
-            images={["/f1.png", "__saas_feature__", "/bg.png", "/bg.png", "/bg.png"]}
+            images={["/f1.png", "/f2.png", "/f3.png", "/f4.png", "/f6.png","/f7.png"]}
             cardProgress={cardProgress}
             slideProgress={carouselSlide}
           />

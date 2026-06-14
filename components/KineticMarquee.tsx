@@ -6,7 +6,7 @@ export default function KineticMarquee({ progress = 0, opacity = 1, cardProgress
 
   const glowScale = 1 + scaleGlowProgress * 0.5
   const cardShiftX = -cardProgress * 30
-  const cardShiftY = -cardProgress * 210
+  const cardShiftY = -cardProgress * 280
   const cardScaleFactor = 1 - cardProgress * 0.75
 
   return (
