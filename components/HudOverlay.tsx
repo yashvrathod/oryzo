@@ -106,11 +106,11 @@ export default function HudOverlay({ progress = 0, cardProgress = 0 }: { progres
             </clipPath>
           </defs>
           {/* Image inside the rectangle */}
-          <image href="/bg.png" x="48" y="48" width="304" height="304"
-            preserveAspectRatio="xMidYMid slice"
-            clipPath="url(#rect-clip)"
-            opacity={cardProgress}
-          />
+            {/* <image href="/bg.png" x="48" y="48" width="304" height="304"
+                preserveAspectRatio="xMidYMid slice"
+                clipPath="url(#rect-clip)"
+                opacity={cardProgress}
+            /> */}
           {/* Glass background — fades out when image appears */}
           <rect x="48" y="48" width="304" height="304" rx="12"
             fill={`rgba(20, 14, 10, ${frameOpacity * 0.25})`}

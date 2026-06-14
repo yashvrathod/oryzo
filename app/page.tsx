@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react"
 import Lenis from "lenis"
 import ModelViewer from "@/components/ModelViewer"
 import HudOverlay from "@/components/HudOverlay"
+import CarouselCards from "@/components/CarouselCards"
 import KineticMarquee from "@/components/KineticMarquee"
 import KeyboardImage from "@/components/KeyboardImage"
 import MouseImage from "@/components/MouseImage"
@@ -119,6 +120,12 @@ export default function Home() {
     1
   )
 
+  // Carousel slide — cards cycle one by one (4400–5600px)
+  const carouselSlide = Math.min(
+    Math.max((scrollY - 4400) / 1200, 0),
+    1
+  )
+
   const staggerWord = (p: number, index: number, step = 0.07, dur = 0.25) => {
     const wp = Math.min(Math.max((p - index * step) / dur, 0), 1)
     return { opacity: wp, transform: `translateY(${(1 - wp) * 24}px)` }
@@ -126,7 +133,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="relative min-h-[700dvh]">
+      <div className="relative min-h-[800dvh]">
         <div className="sticky top-0 w-full h-dvh bg-[#140e0a] flex overflow-hidden">
           {/* Background - fades out on scroll */}
           <div
@@ -202,24 +209,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Rotation phase: hand from left */}
-          {/* <div
-            className="absolute z-20 left-0 top-[50%] "
-            style={{
-              opacity: rotationTextProgress,
-              transform: `translateX(${(-160 + 160 * rotationTextProgress)}px) translateY(-50%) perspective(800px) rotateY(${(45 - 45 * rotationTextProgress)}deg)`,
-              transformOrigin: "right center",
-              willChange: "transform",
-            }}
-          >
-            <img
-              src="/lefthand.png"
-              alt=""
-              className="w-[80px] sm:w-[100px] lg:w-[140px] xl:w-[180px] 2xl:w-[580px] h-auto"
-              style={{ filter: `drop-shadow(0 ${20 * (1 - rotationTextProgress)}px ${30 * (1 - rotationTextProgress)}px rgba(0,0,0,0.5))` }}
-            />
-          </div> */}
-
           {/* Rotation phase: heading at top center */}
           <div
             className="absolute z-20 left-1/2 top-[12%] lg:top-[15%] text-center"
@@ -239,26 +228,16 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* Rotation phase: hand from right */}
-          {/* <div
-            className="absolute z-20 right-0 top-[50%] pr-3 lg:pr-6 xl:pr-10"
-            style={{
-              opacity: rotationTextProgress,
-              transform: `translateX(${(160 - 160 * rotationTextProgress)}px) translateY(-50%) perspective(800px) rotateY(${(-45 + 45 * rotationTextProgress)}deg)`,
-              transformOrigin: "left center",
-              willChange: "transform",
-            }}
-          >
-            <img
-              src="/righthand.png"
-              alt=""
-              className="w-[80px] sm:w-[100px] lg:w-[140px] xl:w-[180px] 2xl:w-[480px] h-auto"
-              style={{ filter: `drop-shadow(0 ${20 * (1 - rotationTextProgress)}px ${30 * (1 - rotationTextProgress)}px rgba(0,0,0,0.5))` }}
-            />
-          </div> */}
 
           {/* HUD overlay */}
           <HudOverlay progress={hudProgress} cardProgress={cardProgress} />
+
+          {/* Carousel — 5 cards cycle one by one as you scroll */}
+          <CarouselCards
+            images={["/bg.png", "/bg.png", "/bg.png", "/bg.png", "/bg.png"]}
+            cardProgress={cardProgress}
+            slideProgress={carouselSlide}
+          />
 
           {/* Rotation phase: hand from bottom */}
           <div
