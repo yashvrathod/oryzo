@@ -2,15 +2,6 @@
 
 import Card from "@/components/Card"
 
-const positions = [
-  { right: '82%', marginRight: '16px', top: '22%' },
-  { right: '82%', marginRight: '16px', top: '25%' },
-  { left: '90%', marginLeft: '0', top: '25%', marginTop: '6px' },
-  { left: '90%', marginLeft: '6px', bottom: '0', top: '0%' },
-  { left: '80%', marginRight: '6px', bottom: '0', top: '60%' },
-  { left: '100%', marginRight: '6px', bottom: '0', top: '20%' },
-]
-
 const cardColors = [
   {
     gradient: 'linear-gradient(135deg, rgba(124,58,237,0.22), rgba(76,29,149,0.08))',
@@ -42,7 +33,14 @@ const cardColors = [
     accent: '#f472b6',
     label: '▲ SMART PATH',
   },
+  {
+    gradient: 'linear-gradient(135deg, rgba(20,184,166,0.22), rgba(6,78,59,0.08))',
+    border: 'rgba(94,234,212,0.28)',
+    accent: '#5eead4',
+    label: '▲ MOCK INTERVIEWS',
+  },
 ]
+
 const featureTitles = [
   "Visual algorithms. Done right.",
   "AI debugging. Without the guesswork.",
@@ -63,189 +61,104 @@ const featureTexts = [
 
 const ctaTexts = [
   "Get Started",
-  "शुरू करें",       // Hindi
-  "सुरू करा",        // Marathi
-  "ಆರಂಭಿಸಿ",        // Kannada
-  "ప్రారంభించండి",   // Telugu
-  "শুরু করুন",      // Bengali
+  "शुरू करें",
+  "सुरू करा",
+  "ಆರಂಭಿಸಿ",
+  "ప్రారంభించండి",
+  "শুরু করুন",
 ]
 
 interface CarouselCardsProps {
   images?: string[]
   cardProgress?: number
-  slideProgress?: number
-  edgeOffset?: number
+  activeIndex?: number
+  onPrev?: () => void
+  onNext?: () => void
 }
 
 export default function CarouselCards({
   images = ["/f1.png", "/f1.png", "/f1.png", "/f1.png", "/f1.png"],
   cardProgress = 0,
-  slideProgress = 0,
-  edgeOffset = 45,
+  activeIndex = 0,
+  onPrev = () => {},
+  onNext = () => {},
 }: CarouselCardsProps) {
   const total = images.length
-  const step = 1 / (total - 1)
-
-  const easeInOutQuad = (t: number) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
+  const c = cardColors[activeIndex]
 
   return (
-    <div className="absolute inset-0 z-[6] pointer-events-none">
-      <div style={{ opacity: cardProgress }}>
-        {images.map((src, i) => {
-          const centerMoment = i * step
-          const rawDist = (slideProgress - centerMoment) / step
-          if (Math.abs(rawDist) > 1.4) return null
+    <div className="absolute inset-0 z-30 pointer-events-none" style={{ opacity: cardProgress }}>
+      <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-12 xl:gap-16 max-w-6xl mx-auto px-6">
+          {/* Image */}
+          <div className="w-full lg:w-1/2 flex justify-center">
+            <Card
+              imageSrc={images[activeIndex]}
+              progress={1}
+              className="w-[240px] h-[170px] sm:w-[300px] sm:h-[210px] lg:w-[380px] lg:h-[270px] xl:w-[460px] xl:h-[325px] 2xl:w-[560px] 2xl:h-[395px]"
+            />
+          </div>
 
-          const absRaw = Math.abs(rawDist)
-          const dist = rawDist > 0
-            ? easeInOutQuad(Math.min(absRaw, 1))
-            : -easeInOutQuad(Math.min(absRaw, 1))
-          const absDist = Math.abs(dist)
-
-          const left = 50 - dist * edgeOffset
-          const scale = (1 - absDist * 0.2) * (i === 0 ? 1.25 : 1.25)
-          const top = 50 + absDist * 5
-          const zIndex = Math.round((1 - absDist) * 100)
-          const cardOpacity = 1 - absDist * 0.3
-
-          return (
-            <div
-              key={i}
-              className="absolute flex items-center justify-center"
-              style={{
-                left: `${left}%`,
-                top: `${top}%`,
-                zIndex,
-                transform: `translate(-50%, -50%) scale(${scale})`,
-                opacity: cardOpacity,
-                willChange: 'transform, opacity',
-              }}
+          {/* Info panel */}
+          <div className="w-full lg:w-1/2 text-center lg:text-left">
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.85em]"
+              style={{ color: c.accent }}
             >
-              <div className="relative flex items-start">
-                {src === "__saas_feature__" ? (
-                  <div
-                    className="
-                      w-[200px] h-[280px]
-                      sm:w-[240px] sm:h-[336px]
-                      lg:w-[300px] lg:h-[420px]
-                      xl:w-[360px] xl:h-[504px]
-                      2xl:w-[400px] 2xl:h-[560px]
-                      overflow-hidden rounded-lg p-2 bg-[#0a0503]
-                    "
-                  >
-                      heheh
-                  </div>
-                ) : (
-                  <Card
-                    imageSrc={src}
-                    progress={1}
-                    className="
-                      w-[200px] h-[280px]
-                      sm:w-[240px] sm:h-[336px]
-                      lg:w-[300px] lg:h-[420px]
-                      xl:w-[360px] xl:h-[504px]
-                      2xl:w-[400px] 2xl:h-[560px]
-                    "
-                  />
-                )}
+              {c.label}
+            </p>
 
-             <div
-  className="absolute pointer-events-none overflow-hidden w-[100px] sm:w-[130px] lg:w-[160px] xl:w-[190px] 2xl:w-[380px] h-[150px] sm:h-[190px] lg:h-[240px] xl:h-[280px] 2xl:h-[280px]"
-  style={{
-    ...positions[i] as React.CSSProperties,
-    borderRadius: '16px', // Slightly smoother, more modern corner radius
-  }}
->
-  {/* The Blurred Background Video Element */}
-  <video
-    autoPlay
-    loop
-    muted
-    playsInline
-    className="absolute inset-0 w-full h-full object-cover blur-lg scale-125 op-80"
-  >
-    <source src="/flower.mp4" type="video/mp4" />
-  </video>
+            <h3 className="mt-3 text-[24px] sm:text-[28px] lg:text-[34px] xl:text-[40px] 2xl:text-[48px] font-extrabold tracking-[-0.03em] text-white leading-[1.1] font-heading">
+              {featureTitles[activeIndex]}
+            </h3>
 
-  {/* Premium Glassmorphism Container */}
-  <div
-    className="absolute inset-0 backdrop-blur-xl bg-black/40 flex flex-col justify-start align-left text-left"
-    style={{
-      background: cardColors[i % cardColors.length].gradient, // Keep your custom gradient overlay if needed
-      border: `1px solid ${cardColors[i % cardColors.length].border || 'rgba(255, 255, 255, 0.12)'}`,
-      borderRadius: '16px',
-      padding: '24px', // Increased padding so the text has room to breathe
-    }}
-  >
-    {/* Feature Tag */}
-    <p
-      className="text-[11px] font-semibold uppercase tracking-[0.85em]"
-      style={{ color: cardColors[i % cardColors.length].accent || '#38bdf8' }}
-    >
-      {cardColors[i % cardColors.length].label || `// FEATURE 0${i + 1}`}
-    </p>
+            <p className="mt-3 sm:mt-4 text-white/65 text-[13px] sm:text-[14px] lg:text-[15px] leading-relaxed max-w-md lg:max-w-none mx-auto lg:mx-0">
+              {featureTexts[activeIndex]}
+            </p>
 
-    {/* Big, Bold, Punchy Title (Pure White, Tight Line Height) */}
-    <h3 className="mt-2 text-white text-[26px] font-extrabold tracking-[0.65] leading-tight">
-      {featureTitles[i]}
-    </h3>
-
-    {/* High-Contrast Description (Muted Off-White) */}
-    <p className="mt-4 text-white/80 text-[14px]  font-normal leading-[relaxed] antialiased">
-      {featureTexts[i]}
-    </p>
-<button
-  className="
-    mt-auto
-    w-fit
-    rounded-full
-    p-[1px]
-    transition-all
-    duration-500
-    hover:scale-[1.03]
-    hover:-translate-y-0.5
-    active:scale-[0.98]
-  "
-  style={{
-    background:
-      "linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.04), rgba(255,255,255,0.12))",
-    boxShadow:
-      "0 20px 60px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
-  }}
->
-  <span
-    className="
-      flex
-      items-center
-      gap-2
-      rounded-full
-      px-5
-      py-2.5
-      text-[11px]
-      uppercase
-      tracking-[0.22em]
-      font-medium
-    "
-    style={{
-
-      backdropFilter: "blur(20px)",
-      color: "#f5ece0",
-      boxShadow:
-        "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(255,255,255,0.02)",
-    }}
-  >
-    <span>{ctaTexts[i % ctaTexts.length]}</span>
-    <span style={{ opacity: 0.6 }}>↗</span>
-  </span>
-</button>
-  </div>
-</div>
-              </div>
+            <div className="mt-5 lg:mt-7">
+              <button
+                className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[10px] sm:text-[11px] uppercase tracking-[0.22em] font-medium transition-all duration-500 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.98]"
+                style={{
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.04), rgba(255,255,255,0.12))",
+                  boxShadow: "0 20px 60px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12)",
+                  color: "#f5ece0",
+                  backdropFilter: "blur(20px)",
+                }}
+              >
+                <span>{ctaTexts[activeIndex]}</span>
+                <span style={{ opacity: 0.6 }}>↗</span>
+              </button>
             </div>
-          )
-        })}
 
-
+            {/* Navigation */}
+            <div className="flex items-center justify-center lg:justify-start gap-4 mt-6 pointer-events-auto">
+              <button
+                onClick={onPrev}
+                disabled={activeIndex === 0}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-base transition-all duration-300 hover:scale-110 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed"
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  border: `1px solid ${c.accent}40`,
+                  color: c.accent,
+                }}
+              >←</button>
+              <span className="text-white/20 text-xs font-mono tracking-wider">
+                {String(activeIndex + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+              </span>
+              <button
+                onClick={onNext}
+                disabled={activeIndex === total - 1}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-base transition-all duration-300 hover:scale-110 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed"
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  border: `1px solid ${c.accent}40`,
+                  color: c.accent,
+                }}
+              >→</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

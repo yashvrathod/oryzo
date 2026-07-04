@@ -12,6 +12,9 @@ import Logo from "@/components/Logo"
 import NotesImage from "@/components/NotesImage"
 import MarkerImage from "@/components/MarkerImage"
 import Navbar from "@/components/Navbar"
+import MoonScene from "@/components/MoonScene"
+import FAQ from "@/components/FAQ"
+import Footer from "@/components/Footer"
 
 export default function Home() {
   const [showKeyboard, setShowKeyboard] = useState(false)
@@ -23,6 +26,8 @@ export default function Home() {
   }, [])
 
   const [scrollY, setScrollY] = useState(0)
+  const [activeFeature, setActiveFeature] = useState(0)
+  const lenisRef = useRef<any>(null)
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -31,6 +36,8 @@ export default function Home() {
       orientation: "vertical",
       smoothWheel: true,
     })
+
+    lenisRef.current = lenis
 
     lenis.on("scroll", (e: any) => {
       setScrollY(e.animatedScroll ?? e.scroll ?? 0)
@@ -70,6 +77,9 @@ export default function Home() {
     1
   )
   const sideTextProgress = Math.min(Math.max((zoomProgress - 0.28) / 0.72, 0), 1)
+
+  // Camera orbit for 3D parallax effect (0–4000px)
+  const orbitProgress = Math.min(Math.max(scrollY / 4000, 0), 1)
 
   // Rotation starts after zoom completes (500–1200px)
   const rotationEnd = 1200
@@ -126,6 +136,67 @@ export default function Home() {
     1
   )
 
+  const featureImages = ["/f1.png", "/f2.png", "/f3.png", "/f4.png", "/f6.png", "/f7.png"]
+  const totalFeatures = featureImages.length
+
+  const scrollToFeature = useCallback((index: number) => {
+    setActiveFeature(index)
+    const target = 4400 + (index / (totalFeatures - 1)) * 1200
+    lenisRef.current?.scrollTo(target, { duration: 1.2 })
+  }, [totalFeatures])
+
+  const moonStart = 7200
+  const moonEnd = 8000
+  const moonProgress = Math.min(
+    Math.max((scrollY - moonStart) / (moonEnd - moonStart), 0),
+    1
+  )
+
+  const moonModelStart = 7600
+  const moonModelEnd = 9200
+  const moonModelProgress = Math.min(
+    Math.max((scrollY - moonModelStart) / (moonModelEnd - moonModelStart), 0),
+    1
+  )
+
+  const nexodeStart = 9200
+  const nexodeEnd = 11200
+  const nexodeProgress = Math.min(
+    Math.max((scrollY - nexodeStart) / (nexodeEnd - nexodeStart), 0),
+    1
+  )
+  const nexEased = nexodeProgress * nexodeProgress * (3 - 2 * nexodeProgress)
+
+  const glowStart = 11200
+  const glowEnd = 12400
+  const glowProgress = Math.min(
+    Math.max((scrollY - glowStart) / (glowEnd - glowStart), 0),
+    1
+  )
+  const glowEased = glowProgress * glowProgress * (3 - 2 * glowProgress)
+
+  const tearStart = 12400
+  const tearEnd = 13800
+  const tearProgress = Math.min(
+    Math.max((scrollY - tearStart) / (tearEnd - tearStart), 0),
+    1
+  )
+  const tearEased = tearProgress * tearProgress * (3 - 2 * tearProgress)
+
+  // CTA — full screen first
+  const ctaFadeIn = Math.min(Math.max((scrollY - 10400) / 1000, 0), 1)
+  const ctaFadeOut = Math.min(Math.max((scrollY - 15000) / 1000, 0), 1)
+  const ctaOpacity = ctaFadeIn * (1 - ctaFadeOut)
+  const ctaEased = ctaFadeIn * ctaFadeIn * (3 - 2 * ctaFadeIn)
+
+  // FAQ — takes over after CTA
+  const faqFadeIn = Math.min(Math.max((scrollY - 15800) / 600, 0), 1)
+  const faqFadeOut = Math.min(Math.max((scrollY - 17200) / 600, 0), 1)
+  const faqOpacity = faqFadeIn * (1 - faqFadeOut)
+
+  // Footer — final section
+  const footerFadeIn = Math.min(Math.max((scrollY - 18000) / 300, 0), 1)
+
   const staggerWord = (p: number, index: number, step = 0.07, dur = 0.25) => {
     const wp = Math.min(Math.max((p - index * step) / dur, 0), 1)
     return { opacity: wp, transform: `translateY(${(1 - wp) * 24}px)` }
@@ -133,9 +204,16 @@ export default function Home() {
 
   return (
     <>
-      <div className="relative min-h-[800dvh]">
+      <Navbar isDark={tearEased > 0.5} />
+      <Logo scrollOpacity={fadeOutOpacity} scrollTranslateY={fadeOutTranslateY} logoProgress={logoProgress} />
+      <div className="relative min-h-[3000dvh]">
         <div className="sticky top-0 w-full h-dvh flex overflow-hidden bg-transparent">
-          {/* Background - fades out on scroll */}
+          {/* bg-2 — revealed when dark tears */}
+          <div className="absolute inset-0 bg-[url('/bg-3-1.png')] bg-cover bg-center" style={{ opacity: tearEased }} />
+          {/* Persistent dark background — tears open from center */}
+          <div className="absolute inset-0" style={{ background: '#0a0a0a', clipPath: `inset(0 ${50 * tearEased}% 0 ${50 * tearEased}%)` }} />
+
+          {/* Background image - fades out on scroll */}
           <div
             className="absolute inset-0 bg-[url('/newbg.png')] bg-cover bg-center"
             style={{ opacity: fadeOutOpacity }}
@@ -143,15 +221,14 @@ export default function Home() {
 
           {/* Model - stays visible */}
           <div className="w-full h-full relative z-[2]">
-            <ModelViewer onLoaded={onModelLoaded} zoomProgress={zoomProgress} rotationProgress={rotationProgress} centerProgress={modelCenterProgress} cardProgress={cardProgress} slideProgress={carouselSlide} />
+            <ModelViewer onLoaded={onModelLoaded} zoomProgress={zoomProgress} rotationProgress={rotationProgress} centerProgress={modelCenterProgress} cardProgress={cardProgress} slideProgress={carouselSlide} orbitProgress={orbitProgress} />
           </div>
 
-          {/* Kinetic marquee — behind model, visible during HUD phase */}
+          {/* Features content — fades out when moon comes */}
+          <div className="absolute inset-0" style={{ opacity: 1 - moonProgress }}>
           <KineticMarquee progress={marqueeProgress} opacity={marqueeProgress} cardProgress={cardProgress} />
 
           {/* Content */}
-          <Navbar />
-          <Logo scrollOpacity={fadeOutOpacity} scrollTranslateY={fadeOutTranslateY} logoProgress={logoProgress} />
           <KeyboardImage visible={showKeyboard} scrollOpacity={fadeOutOpacity} scrollTranslateY={fadeOutTranslateY} />
           <MouseImage visible={showKeyboard} scrollOpacity={fadeOutOpacity} scrollTranslateY={fadeOutTranslateY} />
           <p className="
@@ -232,11 +309,13 @@ export default function Home() {
           {/* HUD overlay */}
           <HudOverlay progress={hudProgress} cardProgress={cardProgress} />
 
-          {/* Carousel — 5 cards cycle one by one as you scroll */}
+          {/* Carousel — card shown via Prev/Next buttons */}
           <CarouselCards
-            images={["/f1.png", "/f2.png", "/f3.png", "/f4.png", "/f6.png","/f7.png"]}
+            images={featureImages}
             cardProgress={cardProgress}
-            slideProgress={carouselSlide}
+            activeIndex={activeFeature}
+            onPrev={() => scrollToFeature(Math.max(0, activeFeature - 1))}
+            onNext={() => scrollToFeature(Math.min(totalFeatures - 1, activeFeature + 1))}
           />
 
           {/* Rotation phase: hand from bottom */}
@@ -272,10 +351,107 @@ export default function Home() {
               })}
             </p>
           </div>
+
+          </div>
+          <div className="absolute inset-0 z-[5] pointer-events-none overflow-hidden">
+            <img
+              src="/moon.png"
+              alt=""
+              className="absolute top-1/2 pointer-events-none select-none"
+              style={{
+                height: '85%',
+                width: 'auto',
+                left: '0',
+                transform: `translate(${-100 + moonProgress * 50}%, -50%)`,
+                opacity: 1 - tearEased,
+                filter: `
+                  drop-shadow(0 0 ${18 * moonProgress}px rgba(255,255,255,${0.35 * moonProgress}))
+                  drop-shadow(0 0 ${40 * moonProgress}px rgba(220,220,255,${0.2 * moonProgress}))
+                  drop-shadow(0 0 ${70 * moonProgress}px rgba(200,200,255,${0.1 * moonProgress}))
+                `,
+              }}
+            />
+            <div style={{ pointerEvents: 'none', transform: moonModelProgress > 0 ? 'none' : 'translate(9999px,9999px)' }}>
+              <MoonScene moonProgress={moonModelProgress} nexodeProgress={nexodeProgress} glowProgress={glowProgress} tearProgress={tearEased} />
+            </div>
+            <div style={{ opacity: 1 - ctaFadeOut }}>
+            {nexodeProgress > 0 && (
+              <div
+                className="absolute inset-0 z-10 pointer-events-none"
+                style={{
+                  border: `${tearEased * 2}px solid rgba(0,0,0,${tearEased * 0.15})`,
+                }}
+              >
+                <span
+                  className="absolute top-1/2 font-extrabold font-heading tracking-[-0.04em] whitespace-nowrap"
+                  style={{
+                    left: '50%',
+                    fontSize: 'clamp(1.4rem,3.5vw,4.2rem)',
+                    color: '#EDE7DA',
+                    transform: `translate(calc(-50% + ${(-21 + tearEased ) * nexEased}vw), -50%) scale(${3.18 + 0.92 * nexEased})`,
+                    opacity: Math.min(nexEased * 3, 1),
+                    filter: `brightness(${1 + glowEased * 5 * (1 - tearEased)})`,
+                    textShadow: tearEased > 0.3 ? '0 2px 12px rgba(0,0,0,0.3)' : glowEased > 0 ? `0 0 ${glowEased * 20 * (1 - tearEased)}px rgba(255,255,255,${glowEased * 0.7 * (1 - tearEased)})` : 'none',
+                  }}
+                >
+                  NEX
+                </span>
+                <span
+                  className="absolute top-1/2 font-extrabold font-heading tracking-[-0.04em] whitespace-nowrap"
+                  style={{
+                    left: '50%',
+                    fontSize: 'clamp(1.4rem,3.5vw,4.2rem)',
+                    color: '#EDE7DA',
+                    transform: `translate(-50%, -50%) scale(${3.18 + 0.92 * nexEased})`,
+                    opacity: tearEased * Math.min(nexEased * 3, 1),
+                    filter: `brightness(${1 + glowEased * 5 * (1 - tearEased)})`,
+                    textShadow: tearEased > 0.3 ? '0 2px 12px rgba(0,0,0,0.3)' : glowEased > 0 ? `0 0 ${glowEased * 20 * (1 - tearEased)}px rgba(255,255,255,${glowEased * 0.7 * (1 - tearEased)})` : 'none',
+                  }}
+                >
+                  O
+                </span>
+                <span
+                  className="absolute top-1/2 font-extrabold font-heading tracking-[-0.04em] whitespace-nowrap"
+                  style={{
+                    left: '50%',
+                    fontSize: 'clamp(1.4rem,3.5vw,4.2rem)',
+                    color: '#EDE7DA',
+                    transform: `translate(calc(-50% + ${(28 - tearEased * 12) * nexEased}vw), -50%) scale(${3.18 + 0.92 * nexEased})`,
+                    opacity: Math.min(nexEased * 3, 1),
+                    filter: `brightness(${1 + glowEased * 5 * (1 - tearEased)})`,
+                    textShadow: tearEased > 0.3 ? '0 2px 12px rgba(0,0,0,0.3)' : glowEased > 0 ? `0 0 ${glowEased * 20 * (1 - tearEased)}px rgba(255,255,255,${glowEased * 0.7 * (1 - tearEased)})` : 'none',
+                  }}
+                >
+                  DE
+                </span>
+              </div>
+            )}
+            </div>
+            {/* Dark overlay cleans bg for FAQ + Footer */}
+            <div className="absolute inset-0 bg-[#0a0a0a]" style={{ opacity: faqFadeIn }} />
+            {ctaOpacity > 0 && (
+              <div
+                className="absolute inset-0 z-20 flex flex-col items-center justify-start pointer-events-none px-6 pt-[68vh]"
+                style={{
+                  opacity: ctaOpacity,
+                  transform: `translateY(${(1 - ctaFadeIn) * 40}px)`,
+                }}
+              >
+                <p className="text-[#EDE7DA] text-center max-w-[500px] text-base sm:text-lg leading-relaxed font-medium">
+                  Master coding interviews with real-time AI feedback, adaptive challenges, and a curriculum built for your growth.
+                </p>
+                <button className="mt-10 px-10 py-4 bg-black text-[#EDE7DA] rounded-full text-sm sm:text-base font-semibold tracking-wide uppercase pointer-events-auto hover:opacity-80 transition-opacity">
+                  Start Free Trial
+                </button>
+              </div>
+            )}
+            <div style={{ opacity: 1 - faqFadeOut, pointerEvents: 'auto' as const }}>
+              <FAQ progress={faqFadeIn} />
+            </div>
+            <Footer progress={footerFadeIn} />
+          </div>
         </div>
       </div>
-
-      <section className="h-dvh" style={{ background: '#b87333' }} />
     </>
   )
 }

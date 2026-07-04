@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 
 const links = [
@@ -10,18 +10,31 @@ const links = [
   { href: "#contact", label: "Contact" },
 ]
 
-export default function Navbar() {
+export default function Navbar({ isDark = false }: { isDark?: boolean }) {
   const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 100)
+    return () => clearTimeout(t)
+  }, [])
+  const c = '#EDE7DA'
 
   return (
     <>
       {/* Top Navigation */}
-      <nav className="absolute top-4 sm:top-8 left-0 right-0 z-50 flex items-start justify-between px-4 sm:px-10 lg:px-16">
+      <nav
+        className="fixed top-4 sm:top-8 left-0 right-0 z-50 flex items-start justify-between px-4 sm:px-10 lg:px-16"
+        style={{
+          opacity: mounted ? 1 : 0,
+          transform: mounted ? 'translateY(0)' : 'translateY(-20px)',
+          transition: 'opacity 0.6s ease, transform 0.6s ease',
+        }}
+      >
         {/* Left Dot */}
-        <div className="h-3 w-3 sm:h-4 sm:w-4 rounded-full bg-[#f5ece0]" />
+        <div className="h-3 w-3 sm:h-4 sm:w-4 rounded-full transition-colors duration-500" style={{ background: c }} />
 
         {/* Desktop Links */}
-        <div className="hidden lg:flex items-center gap-8 text-xs font-medium uppercase tracking-[0.25em] text-[#f5ece0]">
+        <div className="hidden lg:flex items-center gap-8 text-xs font-medium uppercase tracking-[0.25em] transition-colors duration-500" style={{ color: c }}>
           {links.map((l) => (
             <Link key={l.href} href={l.href}>{l.label}</Link>
           ))}
@@ -34,19 +47,22 @@ export default function Navbar() {
           aria-label="Toggle menu"
         >
           <span
-            className={`block h-0.5 w-6 bg-[#f5ece0] transition-all duration-300 ${
+            className={`block h-0.5 w-6 transition-all duration-300 ${
               open ? "translate-y-[7px] rotate-45" : ""
             }`}
+            style={{ background: c }}
           />
           <span
-            className={`block h-0.5 w-6 bg-[#f5ece0] transition-all duration-300 ${
+            className={`block h-0.5 w-6 transition-all duration-300 ${
               open ? "opacity-0" : ""
             }`}
+            style={{ background: c }}
           />
           <span
-            className={`block h-0.5 w-6 bg-[#f5ece0] transition-all duration-300 ${
+            className={`block h-0.5 w-6 transition-all duration-300 ${
               open ? "-translate-y-[7px] -rotate-45" : ""
             }`}
+            style={{ background: c }}
           />
         </button>
       </nav>
@@ -82,17 +98,23 @@ export default function Navbar() {
       {/* Right Vertical Label */}
     <div
   className="
-    absolute right-0 z-50
+    fixed right-0 z-30
     w-18
     py-28
     flex items-center justify-center
-    bg-[#f5ece0]/90 backdrop-blur-md
+    backdrop-blur-md
     hidden lg:flex
     -translate-y-1/2
     top-1/4
+    transition-colors duration-500
   "
+  style={{
+    opacity: mounted ? 1 : 0,
+    transition: 'opacity 0.6s ease 0.2s',
+    background: isDark ? 'rgba(26,26,26,0.9)' : 'rgba(237,231,218,0.9)',
+  }}
 >
-  <span className="rotate-90 whitespace-nowrap text-[14px] font-semibold uppercase tracking-wider text-black">
+  <span className="rotate-90 whitespace-nowrap text-[14px] font-semibold uppercase tracking-wider transition-colors duration-500" style={{ color: isDark ? '#EDE7DA' : '#1a1a1a' }}>
     neXode • AI DSA Mentor
   </span>
 </div>

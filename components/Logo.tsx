@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect, useState } from "react"
+
 export default function Logo({
   scrollOpacity = 1,
   scrollTranslateY = 0,
@@ -9,17 +11,33 @@ export default function Logo({
   scrollTranslateY?: number
   logoProgress?: number
 }) {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 200)
+    return () => clearTimeout(t)
+  }, [])
+
+  const entryOpacity = mounted ? 1 : 0
+  const entryTranslateY = mounted ? 0 : 24
+
   // Ease-out cubic
   const eased =
     1 - Math.pow(1 - Math.min(Math.max(logoProgress, 0), 1), 3)
 
   const scale = 1 - eased * 0.77
   // Final logo position
-const translateX = eased * 30
-const translateY = eased * -118
+const translateX = eased * 38
+const translateY = eased * -82
 
   return (
-    <div className="absolute z-50 select-none">
+    <div
+      className="fixed z-40 select-none"
+      style={{
+        opacity: entryOpacity,
+        transform: `translateY(${entryTranslateY}px)`,
+        transition: 'opacity 0.8s ease, transform 0.8s ease',
+      }}
+    >
       <div
         className="relative sm:top-10 sm:left-6 lg:top-16 lg:left-10 xl:top-24 xl:left-12 2xl:top-32 2xl:left-16"
         style={{

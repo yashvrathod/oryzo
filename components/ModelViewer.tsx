@@ -83,7 +83,7 @@ function MoonFloor({ viewport, zoomProgress }: { viewport: "mobile" | "tablet" |
   )
 }
 
-export default function ModelViewer({ onLoaded, zoomProgress = 0, rotationProgress = 0, centerProgress = 0, cardProgress = 0, slideProgress = 0 }: { onLoaded?: () => void; zoomProgress?: number; rotationProgress?: number; centerProgress?: number; cardProgress?: number; slideProgress?: number }) {
+export default function ModelViewer({ onLoaded, zoomProgress = 0, rotationProgress = 0, centerProgress = 0, cardProgress = 0, slideProgress = 0, orbitProgress = 0 }: { onLoaded?: () => void; zoomProgress?: number; rotationProgress?: number; centerProgress?: number; cardProgress?: number; slideProgress?: number; orbitProgress?: number }) {
   const [viewport, setViewport] = useState<"mobile" | "tablet" | "smDesktop" | "desktop">("desktop")
 
   useEffect(() => {
@@ -99,11 +99,15 @@ export default function ModelViewer({ onLoaded, zoomProgress = 0, rotationProgre
     return () => window.removeEventListener("resize", check)
   }, [])
 
+  const baseRadius = viewport === "mobile" ? 4.5 : viewport === "tablet" ? 5 : viewport === "smDesktop" ? 5.3 : 5.8
+  const baseHeight = viewport === "mobile" ? 1.5 : viewport === "tablet" ? 1.8 : viewport === "smDesktop" ? 1.9 : 2
+  const theta = orbitProgress * Math.PI * 0.6
+  const camX = baseRadius * Math.sin(theta)
+  const camZ = baseRadius * Math.cos(theta)
+  const camY = baseHeight + orbitProgress * 1.5
+
   const camera = {
-    position: viewport === "mobile" ? [2, 1.5, 4] as [number, number, number]
-      : viewport === "tablet" ? [2.5, 1.8, 4.5] as [number, number, number]
-      : viewport === "smDesktop" ? [2.8, 1.9, 4.8] as [number, number, number]
-      : [3, 2, 5] as [number, number, number],
+    position: [camX, camY, camZ] as [number, number, number],
     fov: viewport === "mobile" ? 50 : viewport === "tablet" ? 48 : viewport === "smDesktop" ? 46 : 45,
   }
 
